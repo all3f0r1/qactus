@@ -5,17 +5,7 @@ void main() async {
   runApp(Qactus());
 }
 
-class Qactus extends StatefulWidget {
-  @override
-  _QactusState createState() => _QactusState();
-}
-
-class _QactusState extends State<Qactus> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
+class Qactus extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

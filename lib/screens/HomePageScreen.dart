@@ -1,7 +1,9 @@
 import 'package:Qactus/classes/Articles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 
 import '../HttpFeeds.dart';
+import 'ErrorScreen.dart';
 import 'LoadingScreen.dart';
 
 class HomePageScreen extends StatefulWidget {
@@ -22,24 +24,23 @@ class _HomePageScreenState extends State<HomePageScreen> {
     return FutureBuilder<List<Articles>>(
       future: HttpFeeds().getArticles(),
       builder: (builder, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return LoadingScreen();
+        if (snapshot.hasError) {
+          return ErrorScreen();
         } else if (!snapshot.hasData) {
-          return LoadingScreen();
-        } else if (snapshot.data.length == 0) {
           return LoadingScreen();
         }
 
         return Scaffold(
           appBar: AppBar(
-            // title: Image.asset(
-            //   "assets/header.png",
-            //   scale: 0.3,
-            // ),
-            title: Text(
-              'QActus',
-              style: TextStyle(color: Colors.black),
+            title: Image.asset(
+              "assets/header.png",
+              scale: 0.3,
             ),
+            // title: Text(
+            //   'QActus',
+            //   style: TextStyle(color: Colors.black),
+            //
+            // ),
             backgroundColor: Colors.white,
           ),
           body: RefreshIndicator(
@@ -74,26 +75,28 @@ class _HomePageScreenState extends State<HomePageScreen> {
 //                              ),
 //                            ),
                         Container(
-                          padding: EdgeInsets.symmetric(vertical: 5.0),
-                          child: Text(
-                            item.title.text,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 17.0,
+                            padding: EdgeInsets.symmetric(vertical: 5.0),
+                            child: HtmlWidget(item.title.text)
+                            // Text(
+                            //   item.title.text,
+                            //   style: TextStyle(
+                            //     fontWeight: FontWeight.w500,
+                            //     fontSize: 17.0,
+                            //   ),
+                            // ),
                             ),
-                          ),
-                        ),
                         Container(
-                          padding: EdgeInsets.symmetric(vertical: 5.0),
-                          child: Text(
-                            item.excerpt.text,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black,
-                              fontSize: 12.0,
+                            padding: EdgeInsets.symmetric(vertical: 5.0),
+                            child: HtmlWidget(item.excerpt.text)
+                            // Text(
+                            //   item.excerpt.text,
+                            //   style: TextStyle(
+                            //     fontWeight: FontWeight.w400,
+                            //     color: Colors.black,
+                            //     fontSize: 12.0,
+                            //   ),
+                            // ),
                             ),
-                          ),
-                        ),
                         Divider(
                           thickness: 0.3,
                           color: Colors.black,
