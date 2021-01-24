@@ -1,9 +1,9 @@
 import 'package:Qactus/json_processing/Article.dart';
 import 'package:flutter/material.dart';
-import 'package:html_unescape/html_unescape.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '../HttpFeeds.dart';
+import 'ArticleScreen.dart';
 import 'ErrorScreen.dart';
 import 'LoadingScreen.dart';
 
@@ -14,7 +14,6 @@ class HomePageScreen extends StatefulWidget {
 
 class _HomePageScreenState extends State<HomePageScreen> {
   var refreshKey = GlobalKey<RefreshIndicatorState>();
-  var unescape = HtmlUnescape();
 
   @override
   void initState() {
@@ -54,12 +53,12 @@ class _HomePageScreenState extends State<HomePageScreen> {
                   margin: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 0),
                   child: GestureDetector(
                     onTap: () {
-//                          Navigator.push(
-//                            context,
-//                            MaterialPageRoute(
-//                              builder: (context) => ArticleScreen(articles[index].link),
-//                            ),
-//                          );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ArticleScreen(article: item),
+                        ),
+                      );
                     },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,

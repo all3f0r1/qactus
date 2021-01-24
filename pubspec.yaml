@@ -17,7 +17,7 @@ dependencies:
   intl: ^0.16.1
   cupertino_icons: ^1.0.0
   html_unescape: ^1.0.2
-#  flutter_widget_from_html_core: ^0.5.1+4
+  flutter_widget_from_html_core: ^0.5.1+4
   transparent_image: ^1.0.0
 
 dev_dependencies:
