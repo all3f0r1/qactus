@@ -1,6 +1,7 @@
-import 'package:Qactus/classes/Articles.dart';
+import 'package:Qactus/json_processing/Article.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:html_unescape/html_unescape.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 import '../HttpFeeds.dart';
 import 'ErrorScreen.dart';
@@ -13,6 +14,7 @@ class HomePageScreen extends StatefulWidget {
 
 class _HomePageScreenState extends State<HomePageScreen> {
   var refreshKey = GlobalKey<RefreshIndicatorState>();
+  var unescape = HtmlUnescape();
 
   @override
   void initState() {
@@ -21,7 +23,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Articles>>(
+    return FutureBuilder<List<Article>>(
       future: HttpFeeds().getArticles(),
       builder: (builder, snapshot) {
         if (snapshot.hasError) {
@@ -32,15 +34,10 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            title: Image.asset(
-              "assets/header.png",
-              scale: 0.3,
+            title: Text(
+              'QActus',
+              style: TextStyle(color: Colors.black),
             ),
-            // title: Text(
-            //   'QActus',
-            //   style: TextStyle(color: Colors.black),
-            //
-            // ),
             backgroundColor: Colors.white,
           ),
           body: RefreshIndicator(
@@ -49,7 +46,10 @@ class _HomePageScreenState extends State<HomePageScreen> {
             child: ListView.builder(
               itemCount: snapshot.data.length,
               itemBuilder: (builder, index) {
-                Articles item = snapshot.data[index];
+                Article item = snapshot.data[index];
+                String categories =
+                    item.embedded.wpTerm[0].map((e) => e.name).join(', ');
+
                 return Container(
                   margin: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 0),
                   child: GestureDetector(
@@ -64,39 +64,58 @@ class _HomePageScreenState extends State<HomePageScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
-//                            Visibility(
-//                              visible: isSooner,
-//                              child: Container(
-//                                padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 5.0),
-//                                child: Text(
-//                                  _dateFormatOutput.format(date),
-//                                  style: TextStyle(fontWeight: FontWeight.bold),
-//                                ),
-//                              ),
-//                            ),
                         Container(
-                            padding: EdgeInsets.symmetric(vertical: 5.0),
-                            child: HtmlWidget(item.title.text)
-                            // Text(
-                            //   item.title.text,
-                            //   style: TextStyle(
-                            //     fontWeight: FontWeight.w500,
-                            //     fontSize: 17.0,
-                            //   ),
-                            // ),
+                          padding: EdgeInsets.symmetric(vertical: 5.0),
+                          child: Text(
+                            categories.toUpperCase(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14.0,
+                              color: Color.fromRGBO(119, 119, 119, 1),
                             ),
+                          ),
+                        ),
                         Container(
-                            padding: EdgeInsets.symmetric(vertical: 5.0),
-                            child: HtmlWidget(item.excerpt.text)
-                            // Text(
-                            //   item.excerpt.text,
-                            //   style: TextStyle(
-                            //     fontWeight: FontWeight.w400,
-                            //     color: Colors.black,
-                            //     fontSize: 12.0,
-                            //   ),
-                            // ),
+                          padding: EdgeInsets.symmetric(vertical: 5.0),
+                          child: Stack(
+                            children: <Widget>[
+                              Center(
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: 15.0),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                              Center(
+                                child: FadeInImage.memoryNetwork(
+                                  placeholder: kTransparentImage,
+                                  image: item.imageUrl,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 5.0),
+                          child: Text(
+                            item.title.text,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 17.0,
+                              color: Color.fromRGBO(232, 8, 50, 1),
                             ),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 5.0),
+                          child: Text(
+                            item.excerpt.text,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black,
+                              fontSize: 12.0,
+                            ),
+                          ),
+                        ),
                         Divider(
                           thickness: 0.3,
                           color: Colors.black,
