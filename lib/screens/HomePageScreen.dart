@@ -13,7 +13,7 @@ class HomePageScreen extends StatefulWidget {
 }
 
 class _HomePageScreenState extends State<HomePageScreen> {
-  var refreshKey = GlobalKey<RefreshIndicatorState>();
+  var _refreshKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -40,8 +40,9 @@ class _HomePageScreenState extends State<HomePageScreen> {
             backgroundColor: Colors.white,
           ),
           body: RefreshIndicator(
-            key: refreshKey,
-            onRefresh: refreshList,
+            key: _refreshKey,
+            onRefresh: _refreshList,
+            // TODO: Pagination: https://developer.wordpress.org/rest-api/using-the-rest-api/pagination/
             child: ListView.builder(
               itemCount: snapshot.data.length,
               itemBuilder: (builder, index) {
@@ -96,7 +97,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
                         Container(
                           padding: EdgeInsets.symmetric(vertical: 5.0),
                           child: Text(
-                            // TODO: title isn't always well-displayed
                             item.title.text,
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
@@ -108,6 +108,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                         Container(
                           padding: EdgeInsets.symmetric(vertical: 5.0),
                           child: Text(
+                            // TODO: Excerpt isn't always well-displayed
                             item.excerpt.text,
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
@@ -132,8 +133,8 @@ class _HomePageScreenState extends State<HomePageScreen> {
     );
   }
 
-  Future refreshList() async {
-    refreshKey.currentState?.show();
+  Future _refreshList() async {
+    _refreshKey.currentState?.show();
     await Future.delayed(Duration(seconds: 2));
     setState(() {
       HttpFeeds().getArticles();

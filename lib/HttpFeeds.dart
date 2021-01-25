@@ -22,4 +22,6 @@ class HttpFeeds {
   // TODO: impl getArticlesByCategory() etc...
 
   // TODO: and what about a SQLite local database for caching?
+
+  // TODO: search is done using this: https://stackoverflow.com/questions/38084765/wordpress-rest-api-global-search-api-v2
 }
