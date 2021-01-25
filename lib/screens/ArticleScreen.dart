@@ -11,13 +11,28 @@ class ArticleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // TODO: check AppBar methods
       appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search),
+            // TODO: add search functionality here
+            onPressed: () => AlertDialog(
+              title: Text('Partage'),
+              content: Text('Bientôt ici les partages'),
+            ),
+          ),
+        ],
         title: Text(
-          'QActus',
-          style: TextStyle(color: Colors.black),
+          article.title.text,
+          style: TextStyle(
+            fontSize: 12.0,
+            color: Colors.black,
+          ),
         ),
         backgroundColor: Colors.white,
+        iconTheme: IconThemeData(
+          color: Color.fromRGBO(232, 8, 50, 1),
+        ),
       ),
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: 8.0),

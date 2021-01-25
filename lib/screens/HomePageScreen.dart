@@ -7,6 +7,8 @@ import 'ArticleScreen.dart';
 import 'ErrorScreen.dart';
 import 'LoadingScreen.dart';
 
+enum WhyFarther { harder, smarter, selfStarter, tradingCharter }
+
 class HomePageScreen extends StatefulWidget {
   @override
   _HomePageScreenState createState() => _HomePageScreenState();
@@ -14,6 +16,7 @@ class HomePageScreen extends StatefulWidget {
 
 class _HomePageScreenState extends State<HomePageScreen> {
   var _refreshKey = GlobalKey<RefreshIndicatorState>();
+  WhyFarther _selection;
 
   @override
   void initState() {
@@ -33,11 +36,54 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
         return Scaffold(
           appBar: AppBar(
+            leading: PopupMenuButton<WhyFarther>(
+              icon: IconButton(
+                icon: Icon(Icons.settings),
+                onPressed: () {},
+              ),
+              onSelected: (WhyFarther result) {
+                setState(() {
+                  _selection = result;
+                });
+              },
+              itemBuilder: (BuildContext context) =>
+                  <PopupMenuEntry<WhyFarther>>[
+                const PopupMenuItem<WhyFarther>(
+                  value: WhyFarther.harder,
+                  child: Text('Working a lot harder'),
+                ),
+                const PopupMenuItem<WhyFarther>(
+                  value: WhyFarther.smarter,
+                  child: Text('Being a lot smarter'),
+                ),
+                const PopupMenuItem<WhyFarther>(
+                  value: WhyFarther.selfStarter,
+                  child: Text('Being a self-starter'),
+                ),
+                const PopupMenuItem<WhyFarther>(
+                  value: WhyFarther.tradingCharter,
+                  child: Text('Placed in charge of trading charter'),
+                ),
+              ],
+            ),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.search),
+                // TODO: add search functionality here
+                onPressed: () => AlertDialog(
+                  title: Text('Recherche'),
+                  content: Text('Bientôt ici les recherches'),
+                ),
+              )
+            ],
             title: Text(
               'QActus',
               style: TextStyle(color: Colors.black),
             ),
             backgroundColor: Colors.white,
+            iconTheme: IconThemeData(
+              color: Color.fromRGBO(232, 8, 50, 1),
+            ),
           ),
           body: RefreshIndicator(
             key: _refreshKey,
