@@ -53,11 +53,8 @@ class _HomePageScreenState extends State<HomePageScreen> {
                   margin: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 0),
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ArticleScreen(article: item),
-                        ),
+                      Navigator.of(context).push(
+                        _createRoute(item),
                       );
                     },
                     child: Column(
@@ -88,6 +85,9 @@ class _HomePageScreenState extends State<HomePageScreen> {
                                 child: FadeInImage.memoryNetwork(
                                   placeholder: kTransparentImage,
                                   image: item.imageUrl,
+                                  fadeOutDuration:
+                                      new Duration(milliseconds: 300),
+                                  fadeOutCurve: Curves.decelerate,
                                 ),
                               ),
                             ],
@@ -137,5 +137,19 @@ class _HomePageScreenState extends State<HomePageScreen> {
     setState(() {
       HttpFeeds().getArticles();
     });
+  }
+
+  Route _createRoute(Article item) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => ArticleScreen(
+        article: item,
+      ),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child,
+        );
+      },
+    );
   }
 }

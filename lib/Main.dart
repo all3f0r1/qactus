@@ -10,7 +10,9 @@ class Qactus extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Qactus',
-      home: SafeArea(child: HomePageScreen()),
+      home: SafeArea(
+        child: HomePageScreen(),
+      ),
     );
   }
 }
