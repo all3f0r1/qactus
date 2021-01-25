@@ -1,6 +1,7 @@
 import 'package:Qactus/json_processing/Article.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info/package_info.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '../HttpFeeds.dart';
@@ -17,9 +18,15 @@ class HomePageScreen extends StatefulWidget {
 
 class _HomePageScreenState extends State<HomePageScreen> {
   var _refreshKey = GlobalKey<RefreshIndicatorState>();
+  String _version;
+  String _buildNumber;
 
   @override
   void initState() {
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      _version = packageInfo.version;
+      _buildNumber = packageInfo.buildNumber;
+    });
     super.initState();
   }
 
@@ -47,6 +54,11 @@ class _HomePageScreenState extends State<HomePageScreen> {
                   case Options.options:
                     break;
                   case Options.about:
+                    AboutDialog(
+                      applicationName: 'QActus',
+                      applicationVersion:
+                          _version + "(Build " + _buildNumber + ")",
+                    );
                     break;
                 }
               },
@@ -64,7 +76,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
             actions: [
               IconButton(
                 icon: Icon(Icons.search),
-                // TODO: add search functionality here
+                // TODO: add search functionality here: https://pub.dev/packages/material_floating_search_bar
                 onPressed: () => AlertDialog(
                   title: Text('Recherche'),
                   content: Text('Bientôt ici les recherches'),

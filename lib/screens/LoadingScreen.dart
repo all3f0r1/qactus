@@ -2,18 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LoadingScreen extends StatelessWidget {
-  final _animationController = AnimationController();
-
-  void initState() {
-    _animationController.drive(
-      ColorTween(
-        begin: Colors.red,
-        end: Colors.blue,
-      ),
-    );
-    _animationController.repeat();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
