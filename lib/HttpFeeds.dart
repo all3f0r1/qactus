@@ -18,4 +18,8 @@ class HttpFeeds {
     // return compute(parseArticles, response.body);
     return articleFromJson(response.body);
   }
+
+  // TODO: impl getArticlesByCategory() etc...
+
+  // TODO: and what about a SQLite local database for caching?
 }

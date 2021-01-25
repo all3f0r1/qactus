@@ -5,11 +5,12 @@ class ErrorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("ERROR"),
-      content: Text("Sorry, something went wrong..."),
+      // TODO: find out a way to be more explicit
+      title: Text("ERREUR"),
+      content: Text("Quelque chose s'est mal passé..."),
       actions: [
         FlatButton(
-          child: Text("Exit"),
+          child: Text("Fermer"),
           onPressed: () =>
               SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
         ),

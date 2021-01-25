@@ -11,6 +11,7 @@ class LoadingScreen extends StatelessWidget {
         children: <Widget>[
           Image.asset("assets/loading.png"),
           CircularProgressIndicator(),
+          // TODO: can we describe what's going on?
         ],
       ),
     );

@@ -11,6 +11,7 @@ class ArticleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // TODO: check AppBar methods
       appBar: AppBar(
         title: Text(
           'QActus',
@@ -23,7 +24,10 @@ class ArticleScreen extends StatelessWidget {
         children: <Widget>[
           Container(
             padding: EdgeInsets.symmetric(vertical: 5.0),
-            child: HtmlWidget(article.content.text),
+            // TODO: HtmlWidget is *SO* heavy and "magic"
+            child: HtmlWidget(
+              article.content.text,
+            ),
           ),
           Container(
             alignment: Alignment.topRight,
