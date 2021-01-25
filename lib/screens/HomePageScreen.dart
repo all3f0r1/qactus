@@ -96,6 +96,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                         Container(
                           padding: EdgeInsets.symmetric(vertical: 5.0),
                           child: Text(
+                            // TODO: title isn't always well-displayed
                             item.title.text,
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
