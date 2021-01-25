@@ -1,4 +1,5 @@
 import 'package:Qactus/json_processing/Article.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -7,7 +8,7 @@ import 'ArticleScreen.dart';
 import 'ErrorScreen.dart';
 import 'LoadingScreen.dart';
 
-enum WhyFarther { harder, smarter, selfStarter, tradingCharter }
+enum Options { options, about }
 
 class HomePageScreen extends StatefulWidget {
   @override
@@ -16,7 +17,6 @@ class HomePageScreen extends StatefulWidget {
 
 class _HomePageScreenState extends State<HomePageScreen> {
   var _refreshKey = GlobalKey<RefreshIndicatorState>();
-  WhyFarther _selection;
 
   @override
   void initState() {
@@ -36,33 +36,28 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            leading: PopupMenuButton<WhyFarther>(
+            leading: PopupMenuButton<Options>(
               icon: IconButton(
                 icon: Icon(Icons.settings),
                 onPressed: () {},
               ),
-              onSelected: (WhyFarther result) {
-                setState(() {
-                  _selection = result;
-                });
+              // TODO: implement this
+              onSelected: (Options result) {
+                switch (result) {
+                  case Options.options:
+                    break;
+                  case Options.about:
+                    break;
+                }
               },
-              itemBuilder: (BuildContext context) =>
-                  <PopupMenuEntry<WhyFarther>>[
-                const PopupMenuItem<WhyFarther>(
-                  value: WhyFarther.harder,
-                  child: Text('Working a lot harder'),
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<Options>>[
+                const PopupMenuItem<Options>(
+                  value: Options.options,
+                  child: Text('Options'),
                 ),
-                const PopupMenuItem<WhyFarther>(
-                  value: WhyFarther.smarter,
-                  child: Text('Being a lot smarter'),
-                ),
-                const PopupMenuItem<WhyFarther>(
-                  value: WhyFarther.selfStarter,
-                  child: Text('Being a self-starter'),
-                ),
-                const PopupMenuItem<WhyFarther>(
-                  value: WhyFarther.tradingCharter,
-                  child: Text('Placed in charge of trading charter'),
+                const PopupMenuItem<Options>(
+                  value: Options.about,
+                  child: Text('A propos'),
                 ),
               ],
             ),

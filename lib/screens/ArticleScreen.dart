@@ -14,7 +14,7 @@ class ArticleScreen extends StatelessWidget {
       appBar: AppBar(
         actions: [
           IconButton(
-            icon: Icon(Icons.search),
+            icon: Icon(Icons.share),
             // TODO: add search functionality here
             onPressed: () => AlertDialog(
               title: Text('Partage'),
