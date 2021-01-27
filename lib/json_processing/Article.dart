@@ -104,11 +104,12 @@ class Excerpt {
   factory Excerpt.fromJson(Map<String, dynamic> json) => Excerpt(
         text: json["rendered"] == null
             ? null
-            : unescape
-                .convert(json["rendered"].toString())
-                .split('…')
-                .first
-                .replaceFirst("<p>", ""),
+            : unescape.convert(
+                json["rendered"]
+                    .toString()
+                    .replaceFirst(new RegExp(r'<a href(.+)<\/p>'), '')
+                    .replaceFirst("<p>", ""),
+              ),
       );
 
   Map<String, dynamic> toJson() => {

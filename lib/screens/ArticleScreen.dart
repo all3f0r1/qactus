@@ -33,30 +33,6 @@ class ArticleScreen extends StatelessWidget {
           color: Color.fromRGBO(232, 8, 50, 1),
         ),
       ),
-      // body: ListView(
-      //   padding: EdgeInsets.symmetric(horizontal: 8.0),
-      //   children: <Widget>[
-      //     Container(
-      //       padding: EdgeInsets.symmetric(vertical: 5.0),
-      //       // TODO: HtmlWidget is *SO* heavy and "magic"
-      //       child: HtmlWidget(
-      //         article.content.text,
-      //       ),
-      //     ),
-      //     Container(
-      //       alignment: Alignment.topRight,
-      //       padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-      //       child: Text(
-      //         "DATE",
-      //         style: TextStyle(
-      //           fontWeight: FontWeight.w200,
-      //           color: Colors.black,
-      //           fontSize: 14.0,
-      //         ),
-      //       ),
-      //     ),
-      //   ],
-      // ),
       body: SingleChildScrollView(
         child: Html(
           data: article.content.text,

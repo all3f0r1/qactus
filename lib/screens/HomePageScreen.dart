@@ -48,7 +48,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                 icon: Icon(Icons.settings),
                 onPressed: () {},
               ),
-              // TODO: implement this
+              // TODO: implement these Option and About pages
               onSelected: (Options result) {
                 switch (result) {
                   case Options.options:

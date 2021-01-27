@@ -15,9 +15,8 @@ class HttpFeeds {
   Future<List<Article>> getArticles() async {
     final response = await _client.get(_urlPosts);
 
-    // Use the compute function to run in a separate isolate.
+    // Compute function to run in a separate isolate.
     return compute(articleFromJson, response.body);
-    // return articleFromJson(response.body);
   }
 
   // TODO: impl getArticlesByCategory() etc...
