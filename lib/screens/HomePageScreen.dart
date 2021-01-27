@@ -1,6 +1,7 @@
 import 'package:Qactus/json_processing/Article.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '../HttpFeeds.dart';
@@ -8,15 +9,14 @@ import 'ArticleScreen.dart';
 import 'ErrorScreen.dart';
 import 'LoadingScreen.dart';
 
-enum Options { options, about }
-
 class HomePageScreen extends StatefulWidget {
   @override
   _HomePageScreenState createState() => _HomePageScreenState();
 }
 
 class _HomePageScreenState extends State<HomePageScreen> {
-  var _refreshKey = GlobalKey<RefreshIndicatorState>();
+  final _refreshKey = GlobalKey<RefreshIndicatorState>();
+  final DateFormat dateFormatter = DateFormat('dd-MM-yyyy');
   String _version;
   String _buildNumber;
   bool _isLoading = false;
@@ -49,52 +49,50 @@ class _HomePageScreenState extends State<HomePageScreen> {
         }
 
         return Scaffold(
-          // TODO: investigate the drawer as a suitable alternative for options
-          // drawer: new Drawer(
-          //   child: new ListView(
-          //     children: <Widget>[
-          //       new ListTile(
-          //         title: new Text("WELCOME"),
-          //       ),
-          //       new Divider(),
-          //       new ListTile(
-          //           title: new Text("Settings"),
-          //           trailing: new Icon(Icons.settings),
-          //           onTap: () {}),
-          //     ],
-          //   ),
-          // ),
-          appBar: AppBar(
-            leading: PopupMenuButton<Options>(
-              icon: IconButton(
-                icon: Icon(Icons.settings),
-                onPressed: () {},
+          drawer: Drawer(
+            child: Container(
+              width: 100,
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: <Widget>[
+                  DrawerHeader(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Image.asset(
+                          "assets/header.png",
+                          width: 100,
+                        ),
+                        Text(
+                          'L\'INFORMATEUR.',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 19,
+                            color: Color.fromRGBO(237, 28, 36, 1),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  ListTile(
+                    title: Text("Options"),
+                    leading: Icon(Icons.settings),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    title: Text("A propos"),
+                    leading: Icon(Icons.alternate_email),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
               ),
-              // TODO: implement these Option and About pages (or Drawer)
-              onSelected: (Options result) {
-                switch (result) {
-                  case Options.options:
-                    break;
-                  case Options.about:
-                    AboutDialog(
-                      applicationName: 'QActus',
-                      applicationVersion:
-                          _version + "(Build " + _buildNumber + ")",
-                    );
-                    break;
-                }
-              },
-              itemBuilder: (BuildContext context) => <PopupMenuEntry<Options>>[
-                const PopupMenuItem<Options>(
-                  value: Options.options,
-                  child: Text('Options'),
-                ),
-                const PopupMenuItem<Options>(
-                  value: Options.about,
-                  child: Text('A propos'),
-                ),
-              ],
             ),
+          ),
+          appBar: AppBar(
             actions: [
               IconButton(
                 icon: Icon(Icons.search),
@@ -105,9 +103,19 @@ class _HomePageScreenState extends State<HomePageScreen> {
                 ),
               )
             ],
-            title: Text(
-              'QActus',
-              style: TextStyle(color: Colors.black),
+            title: Row(
+              children: [
+                Text(
+                  'Qact',
+                  style: TextStyle(color: Colors.black),
+                ),
+                Text(
+                  'us',
+                  style: TextStyle(
+                    color: Color.fromRGBO(237, 28, 36, 1),
+                  ),
+                ),
+              ],
             ),
             backgroundColor: Colors.white,
             iconTheme: IconThemeData(
@@ -123,8 +131,11 @@ class _HomePageScreenState extends State<HomePageScreen> {
                 itemCount: snapshot.data.length,
                 itemBuilder: (builder, index) {
                   Article item = snapshot.data[index];
-                  String categories =
-                      item.embedded.wpTerm[0].map((e) => e.name).join(', ');
+                  String categories = item.embedded.wpTerm[0]
+                      .map((e) => e.name)
+                      .join(', ')
+                      .toUpperCase();
+                  String date = dateFormatter.format(item.date);
 
                   return Container(
                     margin: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 0),
@@ -139,13 +150,25 @@ class _HomePageScreenState extends State<HomePageScreen> {
                         children: <Widget>[
                           Container(
                             padding: EdgeInsets.symmetric(vertical: 5.0),
-                            child: Text(
-                              categories.toUpperCase(),
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14.0,
-                                color: Color.fromRGBO(119, 119, 119, 1),
-                              ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  categories,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14.0,
+                                    color: Color.fromRGBO(119, 119, 119, 1),
+                                  ),
+                                ),
+                                Text(
+                                  date,
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    color: Color.fromRGBO(119, 119, 119, 1),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           Container(
