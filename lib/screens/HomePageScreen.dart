@@ -1,7 +1,6 @@
 import 'package:Qactus/json_processing/Article.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:package_info/package_info.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '../HttpFeeds.dart';
@@ -20,20 +19,28 @@ class _HomePageScreenState extends State<HomePageScreen> {
   var _refreshKey = GlobalKey<RefreshIndicatorState>();
   String _version;
   String _buildNumber;
+  bool _isLoading = false;
+
+  ScrollController _scrollController;
+
+  Future<List<Article>> _articles;
 
   @override
   void initState() {
-    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
-      _version = packageInfo.version;
-      _buildNumber = packageInfo.buildNumber;
-    });
     super.initState();
+    _loadArticles();
+    _scrollController = new ScrollController()..addListener(_scrollListener);
+    // TODO: put the following in the proper section
+    // PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+    //   _version = packageInfo.version;
+    //   _buildNumber = packageInfo.buildNumber;
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Article>>(
-      future: HttpFeeds().getArticles(),
+      future: _articles,
       builder: (builder, snapshot) {
         if (snapshot.hasError) {
           return ErrorScreen();
@@ -42,13 +49,28 @@ class _HomePageScreenState extends State<HomePageScreen> {
         }
 
         return Scaffold(
+          // TODO: investigate the drawer as a suitable alternative for options
+          // drawer: new Drawer(
+          //   child: new ListView(
+          //     children: <Widget>[
+          //       new ListTile(
+          //         title: new Text("WELCOME"),
+          //       ),
+          //       new Divider(),
+          //       new ListTile(
+          //           title: new Text("Settings"),
+          //           trailing: new Icon(Icons.settings),
+          //           onTap: () {}),
+          //     ],
+          //   ),
+          // ),
           appBar: AppBar(
             leading: PopupMenuButton<Options>(
               icon: IconButton(
                 icon: Icon(Icons.settings),
                 onPressed: () {},
               ),
-              // TODO: implement these Option and About pages
+              // TODO: implement these Option and About pages (or Drawer)
               onSelected: (Options result) {
                 switch (result) {
                   case Options.options:
@@ -95,90 +117,91 @@ class _HomePageScreenState extends State<HomePageScreen> {
           body: RefreshIndicator(
             key: _refreshKey,
             onRefresh: _refreshList,
-            // TODO: Pagination: https://developer.wordpress.org/rest-api/using-the-rest-api/pagination/
-            child: ListView.builder(
-              itemCount: snapshot.data.length,
-              itemBuilder: (builder, index) {
-                Article item = snapshot.data[index];
-                String categories =
-                    item.embedded.wpTerm[0].map((e) => e.name).join(', ');
+            child: Scrollbar(
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: snapshot.data.length,
+                itemBuilder: (builder, index) {
+                  Article item = snapshot.data[index];
+                  String categories =
+                      item.embedded.wpTerm[0].map((e) => e.name).join(', ');
 
-                return Container(
-                  margin: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 0),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        _createRoute(item),
-                      );
-                    },
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.symmetric(vertical: 5.0),
-                          child: Text(
-                            categories.toUpperCase(),
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14.0,
-                              color: Color.fromRGBO(119, 119, 119, 1),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(vertical: 5.0),
-                          child: Stack(
-                            children: <Widget>[
-                              Center(
-                                child: Padding(
-                                  padding: EdgeInsets.only(top: 15.0),
-                                  child: CircularProgressIndicator(),
-                                ),
+                  return Container(
+                    margin: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          _createRoute(item),
+                        );
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 5.0),
+                            child: Text(
+                              categories.toUpperCase(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14.0,
+                                color: Color.fromRGBO(119, 119, 119, 1),
                               ),
-                              Center(
-                                child: FadeInImage.memoryNetwork(
-                                  placeholder: kTransparentImage,
-                                  image: item.imageUrl,
-                                  fadeOutDuration:
-                                      new Duration(milliseconds: 300),
-                                  fadeOutCurve: Curves.decelerate,
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 5.0),
+                            child: Stack(
+                              children: <Widget>[
+                                Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(top: 15.0),
+                                    child: CircularProgressIndicator(),
+                                  ),
                                 ),
+                                Center(
+                                  child: FadeInImage.memoryNetwork(
+                                    placeholder: kTransparentImage,
+                                    image: item.imageUrl,
+                                    fadeOutDuration:
+                                        new Duration(milliseconds: 300),
+                                    fadeOutCurve: Curves.decelerate,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 5.0),
+                            child: Text(
+                              item.title.text,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 17.0,
+                                color: Color.fromRGBO(232, 8, 50, 1),
                               ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(vertical: 5.0),
-                          child: Text(
-                            item.title.text,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 17.0,
-                              color: Color.fromRGBO(232, 8, 50, 1),
                             ),
                           ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(vertical: 5.0),
-                          child: Text(
-                            // TODO: Excerpt isn't always well-displayed
-                            item.excerpt.text,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black,
-                              fontSize: 12.0,
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 5.0),
+                            child: Text(
+                              item.excerpt.text,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black,
+                                fontSize: 12.0,
+                              ),
                             ),
                           ),
-                        ),
-                        Divider(
-                          thickness: 0.3,
-                          color: Colors.black,
-                        ),
-                      ],
+                          Divider(
+                            thickness: 0.3,
+                            color: Colors.black,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         );
@@ -194,6 +217,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
     });
   }
 
+  // This deserved its own method because *transitions*
   Route _createRoute(Article item) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => ArticleScreen(
@@ -206,5 +230,22 @@ class _HomePageScreenState extends State<HomePageScreen> {
         );
       },
     );
+  }
+
+  // If we reach the end of page, load the next one
+  void _scrollListener() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      HttpFeeds().incrementPageNumber();
+      setState(() {
+        _isLoading = true;
+        _loadArticles();
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _loadArticles() async {
+    _articles = HttpFeeds().getArticles();
   }
 }
