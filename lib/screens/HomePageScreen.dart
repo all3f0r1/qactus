@@ -1,8 +1,9 @@
 import 'package:Qactus/json_processing/Article.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:transparent_image/transparent_image.dart';
+import 'package:octo_image/octo_image.dart';
 
 import '../HttpFeeds.dart';
 import 'ArticleScreen.dart';
@@ -75,14 +76,20 @@ class _HomePageScreenState extends State<HomePageScreen> {
                     ),
                   ),
                   ListTile(
-                    title: Text("Options"),
+                    title: Text(
+                      "Options",
+                      style: _drawerFontStyle(),
+                    ),
                     leading: Icon(Icons.settings),
                     onTap: () {
                       Navigator.pop(context);
                     },
                   ),
                   ListTile(
-                    title: Text("A propos"),
+                    title: Text(
+                      "A propos",
+                      style: _drawerFontStyle(),
+                    ),
                     leading: Icon(Icons.alternate_email),
                     onTap: () {
                       Navigator.pop(context);
@@ -175,19 +182,34 @@ class _HomePageScreenState extends State<HomePageScreen> {
                             padding: EdgeInsets.symmetric(vertical: 5.0),
                             child: Stack(
                               children: <Widget>[
-                                Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.only(top: 15.0),
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                ),
-                                Center(
-                                  child: FadeInImage.memoryNetwork(
-                                    placeholder: kTransparentImage,
-                                    image: item.imageUrl,
-                                    fadeOutDuration:
-                                        new Duration(milliseconds: 300),
-                                    fadeOutCurve: Curves.decelerate,
+                                // Center(
+                                //   child: Padding(
+                                //     padding: EdgeInsets.only(top: 15.0),
+                                //     child: CircularProgressIndicator(),
+                                //   ),
+                                // ),
+                                // Center(
+                                //   child: FadeInImage.memoryNetwork(
+                                //     placeholder: kTransparentImage,
+                                //     image: item.imageUrl,
+                                //     fadeOutDuration:
+                                //         new Duration(milliseconds: 300),
+                                //     fadeOutCurve: Curves.decelerate,
+                                //   ),
+                                // ),
+                                AspectRatio(
+                                  aspectRatio: 269 / 173,
+                                  child: OctoImage(
+                                    width: MediaQuery.of(context).size.width,
+                                    image: CachedNetworkImageProvider(
+                                        item.imageUrl),
+                                    placeholderBuilder:
+                                        OctoPlaceholder.blurHash(
+                                      'h42pq57SP?EnCmVt?k!gz#t',
+                                    ),
+                                    errorBuilder:
+                                        OctoError.icon(color: Colors.red),
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
                               ],
@@ -270,5 +292,12 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
   void _loadArticles() async {
     _articles = HttpFeeds().getArticles();
+  }
+
+  TextStyle _drawerFontStyle() {
+    return TextStyle(
+      fontSize: 18,
+      color: Color.fromRGBO(119, 119, 119, 1),
+    );
   }
 }
