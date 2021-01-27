@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:Qactus/json_processing/Article.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class HttpFeeds {
@@ -15,8 +16,8 @@ class HttpFeeds {
     final response = await _client.get(_urlPosts);
 
     // Use the compute function to run in a separate isolate.
-    // return compute(parseArticles, response.body);
-    return articleFromJson(response.body);
+    return compute(articleFromJson, response.body);
+    // return articleFromJson(response.body);
   }
 
   // TODO: impl getArticlesByCategory() etc...
