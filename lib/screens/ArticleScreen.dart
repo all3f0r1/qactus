@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/html_parser.dart';
 import 'package:flutter_html/style.dart';
+import 'package:share/share.dart';
 
 class ArticleScreen extends StatelessWidget {
   final Article article;
@@ -17,11 +18,7 @@ class ArticleScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: Icon(Icons.share),
-            // TODO: add search functionality here
-            onPressed: () => AlertDialog(
-              title: Text('Partage'),
-              content: Text('Bientôt ici les partages'),
-            ),
+            onPressed: () => Share.share(article.url),
           ),
         ],
         title: Text(
