@@ -2,8 +2,10 @@ import 'package:Qactus/json_processing/Article.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:intl/intl.dart';
 import 'package:octo_image/octo_image.dart';
+import 'package:package_info/package_info.dart';
 
 import '../HttpFeeds.dart';
 import 'ArticleScreen.dart';
@@ -18,11 +20,6 @@ class HomePageScreen extends StatefulWidget {
 class _HomePageScreenState extends State<HomePageScreen> {
   final _refreshKey = GlobalKey<RefreshIndicatorState>();
   final DateFormat dateFormatter = DateFormat('dd-MM-yyyy');
-  String _version;
-  String _buildNumber;
-  bool _isLoading = false;
-
-  ScrollController _scrollController;
 
   Future<List<Article>> _articles;
 
@@ -30,12 +27,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
   void initState() {
     super.initState();
     _loadArticles();
-    _scrollController = new ScrollController()..addListener(_scrollListener);
     // TODO: put the following in the proper section
-    // PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
-    //   _version = packageInfo.version;
-    //   _buildNumber = packageInfo.buildNumber;
-    // });
   }
 
   @override
@@ -92,7 +84,37 @@ class _HomePageScreenState extends State<HomePageScreen> {
                     ),
                     leading: Icon(Icons.alternate_email),
                     onTap: () {
-                      Navigator.pop(context);
+                      PackageInfo.fromPlatform()
+                          .then((PackageInfo packageInfo) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => AboutDialog(
+                              applicationName: "Qactus",
+                              applicationVersion: packageInfo.version +
+                                  " build number " +
+                                  packageInfo.buildNumber,
+                              applicationIcon: Image.asset("assets/header.png"),
+                              children: [
+                                Text("Conçu par Alexandre Tournai"),
+                                Divider(),
+                                RaisedButton(
+                                  onPressed: () async {
+                                    final Email email = Email(
+                                      subject: 'App Qactus',
+                                      recipients: [
+                                        'tournai.alexandre@gmail.com'
+                                      ],
+                                      isHTML: false,
+                                    );
+                                    await FlutterEmailSender.send(email);
+                                  },
+                                  child: Text("Me contacter"),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      });
                     },
                   ),
                 ],
@@ -132,120 +154,115 @@ class _HomePageScreenState extends State<HomePageScreen> {
           body: RefreshIndicator(
             key: _refreshKey,
             onRefresh: _refreshList,
-            child: Scrollbar(
-              child: ListView.builder(
-                controller: _scrollController,
-                itemCount: snapshot.data.length,
-                itemBuilder: (builder, index) {
-                  Article item = snapshot.data[index];
-                  String categories = item.embedded.wpTerm[0]
-                      .map((e) => e.name)
-                      .join(', ')
-                      .toUpperCase();
-                  String date = dateFormatter.format(item.date);
+            child: NotificationListener<ScrollNotification>(
+              // ignore: missing_return
+              onNotification: (ScrollNotification scrollInfo) {
+                if (scrollInfo.metrics.pixels ==
+                    scrollInfo.metrics.maxScrollExtent) {
+                  HttpFeeds().incrementPageNumber();
+                  setState(() {
+                    _loadArticles();
+                  });
+                }
+              },
+              child: Scrollbar(
+                child: ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (builder, index) {
+                    Article item = snapshot.data[index];
+                    String categories = item.embedded.wpTerm[0]
+                        .map((e) => e.name)
+                        .join(', ')
+                        .toUpperCase();
+                    String date = dateFormatter.format(item.date);
 
-                  return Container(
-                    margin: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 0),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          _createRoute(item),
-                        );
-                      },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Container(
-                            padding: EdgeInsets.symmetric(vertical: 5.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  categories,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14.0,
-                                    color: Color.fromRGBO(119, 119, 119, 1),
-                                  ),
-                                ),
-                                Text(
-                                  date,
-                                  style: TextStyle(
-                                    fontSize: 14.0,
-                                    color: Color.fromRGBO(119, 119, 119, 1),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(vertical: 5.0),
-                            child: Stack(
-                              children: <Widget>[
-                                // Center(
-                                //   child: Padding(
-                                //     padding: EdgeInsets.only(top: 15.0),
-                                //     child: CircularProgressIndicator(),
-                                //   ),
-                                // ),
-                                // Center(
-                                //   child: FadeInImage.memoryNetwork(
-                                //     placeholder: kTransparentImage,
-                                //     image: item.imageUrl,
-                                //     fadeOutDuration:
-                                //         new Duration(milliseconds: 300),
-                                //     fadeOutCurve: Curves.decelerate,
-                                //   ),
-                                // ),
-                                AspectRatio(
-                                  aspectRatio: 269 / 173,
-                                  child: OctoImage(
-                                    width: MediaQuery.of(context).size.width,
-                                    image: CachedNetworkImageProvider(
-                                        item.imageUrl),
-                                    placeholderBuilder:
-                                        OctoPlaceholder.blurHash(
-                                      'h42pq57SP?EnCmVt?k!gz#t',
+                    return Container(
+                      margin: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 0),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            _createRoute(item),
+                          );
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            Container(
+                              padding: EdgeInsets.symmetric(vertical: 5.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    categories,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14.0,
+                                      color: Color.fromRGBO(119, 119, 119, 1),
                                     ),
-                                    errorBuilder:
-                                        OctoError.icon(color: Colors.red),
-                                    fit: BoxFit.cover,
                                   ),
+                                  Text(
+                                    date,
+                                    style: TextStyle(
+                                      fontSize: 14.0,
+                                      color: Color.fromRGBO(119, 119, 119, 1),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(vertical: 5.0),
+                              child: Stack(
+                                children: <Widget>[
+                                  AspectRatio(
+                                    aspectRatio: 269 / 173,
+                                    child: OctoImage(
+                                      width: MediaQuery.of(context).size.width,
+                                      image: CachedNetworkImageProvider(
+                                          item.imageUrl),
+                                      placeholderBuilder: OctoPlaceholder
+                                          .circularProgressIndicator(),
+                                      errorBuilder:
+                                          OctoError.icon(color: Colors.red),
+                                      fit: BoxFit.fitWidth,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(vertical: 5.0),
+                              child: Text(
+                                item.title.text,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 17.0,
+                                  color: Color.fromRGBO(232, 8, 50, 1),
                                 ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(vertical: 5.0),
-                            child: Text(
-                              item.title.text,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 17.0,
-                                color: Color.fromRGBO(232, 8, 50, 1),
                               ),
                             ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(vertical: 5.0),
-                            child: Text(
-                              item.excerpt.text,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black,
-                                fontSize: 12.0,
+                            Container(
+                              padding: EdgeInsets.symmetric(vertical: 5.0),
+                              child: Text(
+                                item.excerpt.text,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black,
+                                  fontSize: 12.0,
+                                ),
                               ),
                             ),
-                          ),
-                          Divider(
-                            thickness: 0.3,
-                            color: Colors.black,
-                          ),
-                        ],
+                            Divider(
+                              thickness: 0.3,
+                              color: Colors.black,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ),
@@ -275,19 +292,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
         );
       },
     );
-  }
-
-  // If we reach the end of page, load the next one
-  void _scrollListener() {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
-      HttpFeeds().incrementPageNumber();
-      setState(() {
-        _isLoading = true;
-        _loadArticles();
-        _isLoading = false;
-      });
-    }
   }
 
   void _loadArticles() async {
