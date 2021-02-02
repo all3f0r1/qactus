@@ -1,17 +1,11 @@
-# qactus
+# Qactus
 
-A new Flutter application.
+A Flutter Android app (for now, iOS eventually coming) fetching latest articles from [Qactus.fr](https://www.qactus.fr), among other features. It's not meant to be fully featured, as it's a hobby project to better get the hang of Android and Flutter. 
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+I'm using [Android Studio](https://developer.android.com/studio) with Flutter plugin from the marketplace.
 
-A few resources to get you started if this is your first Flutter project:
+Here is a great [step-by-step guide](https://flutter.dev/docs/get-started/install) on how to install it all.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-"# qactus" 
+Once done, you can pull my repo and have fun!
