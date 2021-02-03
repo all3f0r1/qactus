@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LoadingScreen extends StatefulWidget {
-  LoadingScreen({Key key, this.duration}) : super(key: key);
+  LoadingScreen({Key key}) : super(key: key);
 
-  final Duration duration;
+  final Duration duration = Duration(milliseconds: 800);
 
   @override
   _LoadingScreenState createState() => _LoadingScreenState();
@@ -17,8 +17,10 @@ class _LoadingScreenState extends State<LoadingScreen>
   @override
   void initState() {
     super.initState();
-    _animationController =
-        AnimationController(vsync: this, duration: widget.duration);
+    _animationController = AnimationController(
+      vsync: this,
+      duration: widget.duration,
+    );
   }
 
   @override
@@ -30,9 +32,7 @@ class _LoadingScreenState extends State<LoadingScreen>
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Image.asset("assets/loading.png"),
-          CircularProgressIndicator(
-              // TODO: can we describe what's going on?
-              ),
+          CircularProgressIndicator(),
         ],
       ),
     );

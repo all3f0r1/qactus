@@ -51,7 +51,7 @@ class ArticleScreen extends StatelessWidget {
             )
           },
           customRender: {
-            "flutter": (RenderContext context, Widget child, attributes, _) {
+            "video": (RenderContext context, Widget child, attributes, _) {
               return FlutterLogo(
                 style: (attributes['horizontal'] != null)
                     ? FlutterLogoStyle.horizontal

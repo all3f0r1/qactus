@@ -1,3 +1,4 @@
+import 'package:Qactus/components/PageTransition.dart';
 import 'package:Qactus/components/SideMenu.dart';
 import 'package:Qactus/json_processing/Article.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -34,10 +35,14 @@ class _HomePageScreenState extends State<HomePageScreen> {
         if (snapshot.hasError) {
           return ErrorScreen();
         } else if (!snapshot.hasData) {
-          return LoadingScreen(duration: Duration(seconds: 2));
+          return LoadingScreen();
         }
 
         return Scaffold(
+          persistentFooterButtons: [
+            Text("1"),
+            Text("2"),
+          ],
           drawer: SideMenu(),
           appBar: AppBar(
             actions: [
@@ -72,6 +77,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
           body: NotificationListener<ScrollNotification>(
             // ignore: missing_return
             onNotification: (ScrollNotification scrollInfo) {
+              // TODO: change this logic towards a page-based navigation
               if (scrollInfo.metrics.pixels ==
                   scrollInfo.metrics.maxScrollExtent) {
                 HttpFeeds().incrementPageNumber();
@@ -96,7 +102,9 @@ class _HomePageScreenState extends State<HomePageScreen> {
                     child: GestureDetector(
                       onTap: () {
                         Navigator.of(context).push(
-                          _createRoute(item),
+                          PageTransition(
+                            ArticleScreen(article: item),
+                          ),
                         );
                       },
                       child: Column(
@@ -179,36 +187,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
               ),
             ),
           ),
-        );
-      },
-    );
-  }
-
-  // This deserved its own method because *transitions*
-  Route _createRoute(Article item) {
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => ArticleScreen(
-        article: item,
-      ),
-      // transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      //   return FadeTransition(
-      //     opacity: animation,
-      //     child: child,
-      //   );
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = Offset(0.0, 1.0);
-        var end = Offset.zero;
-        var curve = Curves.ease;
-
-        var tween = Tween(begin: begin, end: end);
-        var curvedAnimation = CurvedAnimation(
-          parent: animation,
-          curve: curve,
-        );
-
-        return SlideTransition(
-          position: tween.animate(curvedAnimation),
-          child: child,
         );
       },
     );
