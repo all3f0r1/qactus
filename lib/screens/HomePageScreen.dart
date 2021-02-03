@@ -27,7 +27,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
   void initState() {
     super.initState();
     _loadArticles();
-    // TODO: put the following in the proper section
   }
 
   @override
