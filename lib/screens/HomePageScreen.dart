@@ -19,8 +19,7 @@ class HomePageScreen extends StatefulWidget {
 
 class _HomePageScreenState extends State<HomePageScreen> {
   final _refreshKey = GlobalKey<RefreshIndicatorState>();
-  final DateFormat dateFormatter = DateFormat('dd-MM-yyyy');
-
+  final DateFormat _dateFormatter = DateFormat('dd-MM-yyyy');
   Future<List<Article>> _articles;
 
   @override
@@ -37,7 +36,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
         if (snapshot.hasError) {
           return ErrorScreen();
         } else if (!snapshot.hasData) {
-          return LoadingScreen();
+          return LoadingScreen(duration: Duration(seconds: 2));
         }
 
         return Scaffold(
@@ -150,132 +149,119 @@ class _HomePageScreenState extends State<HomePageScreen> {
               color: Color.fromRGBO(232, 8, 50, 1),
             ),
           ),
-          body: RefreshIndicator(
-            key: _refreshKey,
-            onRefresh: _refreshList,
-            child: NotificationListener<ScrollNotification>(
-              // ignore: missing_return
-              onNotification: (ScrollNotification scrollInfo) {
-                if (scrollInfo.metrics.pixels ==
-                    scrollInfo.metrics.maxScrollExtent) {
-                  HttpFeeds().incrementPageNumber();
-                  setState(() {
-                    _loadArticles();
-                  });
-                }
-              },
-              child: Scrollbar(
-                child: ListView.builder(
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (builder, index) {
-                    Article item = snapshot.data[index];
-                    String categories = item.embedded.wpTerm[0]
-                        .map((e) => e.name)
-                        .join(', ')
-                        .toUpperCase();
-                    String date = dateFormatter.format(item.date);
+          body: NotificationListener<ScrollNotification>(
+            // ignore: missing_return
+            onNotification: (ScrollNotification scrollInfo) {
+              if (scrollInfo.metrics.pixels ==
+                  scrollInfo.metrics.maxScrollExtent) {
+                HttpFeeds().incrementPageNumber();
+                setState(() {
+                  _loadArticles();
+                });
+              }
+            },
+            child: Scrollbar(
+              child: ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (builder, index) {
+                  Article item = snapshot.data[index];
+                  String categories = item.embedded.wpTerm[0]
+                      .map((e) => e.name)
+                      .join(', ')
+                      .toUpperCase();
+                  String date = _dateFormatter.format(item.date);
 
-                    return Container(
-                      margin: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 0),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            _createRoute(item),
-                          );
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.symmetric(vertical: 5.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    categories,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 14.0,
-                                      color: Color.fromRGBO(119, 119, 119, 1),
-                                    ),
+                  return Container(
+                    margin: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          _createRoute(item),
+                        );
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 5.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  categories,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14.0,
+                                    color: Color.fromRGBO(119, 119, 119, 1),
                                   ),
-                                  Text(
-                                    date,
-                                    style: TextStyle(
-                                      fontSize: 14.0,
-                                      color: Color.fromRGBO(119, 119, 119, 1),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.symmetric(vertical: 5.0),
-                              child: Stack(
-                                children: <Widget>[
-                                  AspectRatio(
-                                    aspectRatio: 269 / 173,
-                                    child: OctoImage(
-                                      width: MediaQuery.of(context).size.width,
-                                      image: CachedNetworkImageProvider(
-                                          item.imageUrl),
-                                      placeholderBuilder: OctoPlaceholder
-                                          .circularProgressIndicator(),
-                                      errorBuilder:
-                                          OctoError.icon(color: Colors.red),
-                                      fit: BoxFit.fitWidth,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.symmetric(vertical: 5.0),
-                              child: Text(
-                                item.title.text,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 17.0,
-                                  color: Color.fromRGBO(232, 8, 50, 1),
                                 ),
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.symmetric(vertical: 5.0),
-                              child: Text(
-                                item.excerpt.text,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black,
-                                  fontSize: 12.0,
+                                Text(
+                                  date,
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    color: Color.fromRGBO(119, 119, 119, 1),
+                                  ),
                                 ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 5.0),
+                            child: Stack(
+                              children: <Widget>[
+                                AspectRatio(
+                                  aspectRatio: 269 / 173,
+                                  child: OctoImage(
+                                    width: MediaQuery.of(context).size.width,
+                                    image: CachedNetworkImageProvider(
+                                        item.imageUrl),
+                                    placeholderBuilder: OctoPlaceholder
+                                        .circularProgressIndicator(),
+                                    errorBuilder:
+                                        OctoError.icon(color: Colors.red),
+                                    fit: BoxFit.fitWidth,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 5.0),
+                            child: Text(
+                              item.title.text,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 17.0,
+                                color: Color.fromRGBO(232, 8, 50, 1),
                               ),
                             ),
-                            Divider(
-                              thickness: 0.3,
-                              color: Colors.black,
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 5.0),
+                            child: Text(
+                              item.excerpt.text,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black,
+                                fontSize: 12.0,
+                              ),
                             ),
-                          ],
-                        ),
+                          ),
+                          Divider(
+                            thickness: 0.3,
+                            color: Colors.black,
+                          ),
+                        ],
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
             ),
           ),
         );
       },
     );
-  }
-
-  Future _refreshList() async {
-    _refreshKey.currentState?.show();
-    await Future.delayed(Duration(seconds: 2));
-    setState(() {
-      HttpFeeds().getArticles();
-    });
   }
 
   // This deserved its own method because *transitions*
