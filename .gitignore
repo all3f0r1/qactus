@@ -49,4 +49,5 @@ app.*.map.json
 /.gradle/buildOutputCleanup/cache.properties
 /.gradle/checksums/checksums.lock
 /.gradle/vcs-1/gc.properties
+/key.properties
 /local.properties

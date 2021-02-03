@@ -1,11 +1,10 @@
+import 'package:Qactus/components/SideMenu.dart';
 import 'package:Qactus/json_processing/Article.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:intl/intl.dart';
 import 'package:octo_image/octo_image.dart';
-import 'package:package_info/package_info.dart';
 
 import '../HttpFeeds.dart';
 import 'ArticleScreen.dart';
@@ -18,7 +17,6 @@ class HomePageScreen extends StatefulWidget {
 }
 
 class _HomePageScreenState extends State<HomePageScreen> {
-  final _refreshKey = GlobalKey<RefreshIndicatorState>();
   final DateFormat _dateFormatter = DateFormat('dd-MM-yyyy');
   Future<List<Article>> _articles;
 
@@ -40,85 +38,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
         }
 
         return Scaffold(
-          drawer: Drawer(
-            child: Container(
-              width: 100,
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: <Widget>[
-                  DrawerHeader(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Image.asset(
-                          "assets/header.png",
-                          width: 100,
-                        ),
-                        Text(
-                          'L\'INFORMATEUR.',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 19,
-                            color: Color.fromRGBO(237, 28, 36, 1),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  ListTile(
-                    title: Text(
-                      "Options",
-                      style: _drawerFontStyle(),
-                    ),
-                    leading: Icon(Icons.settings),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  ListTile(
-                    title: Text(
-                      "A propos",
-                      style: _drawerFontStyle(),
-                    ),
-                    leading: Icon(Icons.alternate_email),
-                    onTap: () {
-                      PackageInfo.fromPlatform()
-                          .then((PackageInfo packageInfo) {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => AboutDialog(
-                              applicationName: "Qactus",
-                              applicationVersion: packageInfo.version +
-                                  " build number " +
-                                  packageInfo.buildNumber,
-                              applicationIcon: Image.asset("assets/header.png"),
-                              children: [
-                                Text("Conçu par Alexandre Tournai"),
-                                Divider(),
-                                RaisedButton(
-                                  onPressed: () async {
-                                    final Email email = Email(
-                                      subject: 'App Qactus',
-                                      recipients: [
-                                        'tournai.alexandre@gmail.com'
-                                      ],
-                                      isHTML: false,
-                                    );
-                                    await FlutterEmailSender.send(email);
-                                  },
-                                  child: Text("Me contacter"),
-                                )
-                              ],
-                            ),
-                          ),
-                        );
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
+          drawer: SideMenu(),
           appBar: AppBar(
             actions: [
               IconButton(
@@ -270,9 +190,24 @@ class _HomePageScreenState extends State<HomePageScreen> {
       pageBuilder: (context, animation, secondaryAnimation) => ArticleScreen(
         article: item,
       ),
+      // transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      //   return FadeTransition(
+      //     opacity: animation,
+      //     child: child,
+      //   );
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(
-          opacity: animation,
+        var begin = Offset(0.0, 1.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+
+        var tween = Tween(begin: begin, end: end);
+        var curvedAnimation = CurvedAnimation(
+          parent: animation,
+          curve: curve,
+        );
+
+        return SlideTransition(
+          position: tween.animate(curvedAnimation),
           child: child,
         );
       },
@@ -281,12 +216,5 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
   void _loadArticles() async {
     _articles = HttpFeeds().getArticles();
-  }
-
-  TextStyle _drawerFontStyle() {
-    return TextStyle(
-      fontSize: 18,
-      color: Color.fromRGBO(119, 119, 119, 1),
-    );
   }
 }
