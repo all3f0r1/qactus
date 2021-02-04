@@ -24,5 +24,5 @@ class PageTransition<T> extends PageRoute<T> {
   bool get maintainState => true;
 
   @override
-  Duration get transitionDuration => Duration(milliseconds: 800);
+  Duration get transitionDuration => Duration(milliseconds: 500);
 }

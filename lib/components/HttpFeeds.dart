@@ -12,7 +12,6 @@ class HttpFeeds {
       '&_fields=id,date,link,title.rendered,jetpack_featured_media_url,'
       'content.rendered,excerpt.rendered,_links.author,_links.wp:term'
       '&page=';
-  int currentPage = 1;
 
   var _client = http.Client();
 
@@ -22,15 +21,11 @@ class HttpFeeds {
 
   HttpFeeds.initState();
 
-  Future<List<Article>> getArticles() async {
-    final response = await _client.get(_urlPosts + currentPage.toString());
+  Future<List<Article>> getArticles(int page) async {
+    final response = await _client.get(_urlPosts + page.toString());
 
     // Compute function to run in a separate isolate.
     return compute(articleFromJson, response.body);
-  }
-
-  void incrementPageNumber() {
-    currentPage += 1;
   }
 
   // TODO: impl getArticlesByCategory() etc...

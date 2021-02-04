@@ -1,3 +1,4 @@
+import 'package:Qactus/components/BottomMenu.dart';
 import 'package:Qactus/components/PageTransition.dart';
 import 'package:Qactus/components/SideMenu.dart';
 import 'package:Qactus/json_processing/Article.dart';
@@ -7,14 +8,19 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:octo_image/octo_image.dart';
 
-import '../HttpFeeds.dart';
+import '../components/HttpFeeds.dart';
 import 'ArticleScreen.dart';
 import 'ErrorScreen.dart';
 import 'LoadingScreen.dart';
 
 class HomePageScreen extends StatefulWidget {
+  const HomePageScreen({Key key}) : super(key: key);
+
   @override
   _HomePageScreenState createState() => _HomePageScreenState();
+
+  static _HomePageScreenState of(BuildContext context) =>
+      context.findAncestorStateOfType<_HomePageScreenState>();
 }
 
 class _HomePageScreenState extends State<HomePageScreen> {
@@ -24,7 +30,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
   @override
   void initState() {
     super.initState();
-    _loadArticles();
+    _loadArticles(1);
   }
 
   @override
@@ -39,10 +45,9 @@ class _HomePageScreenState extends State<HomePageScreen> {
         }
 
         return Scaffold(
-          persistentFooterButtons: [
-            Text("1"),
-            Text("2"),
-          ],
+          bottomNavigationBar: BottomAppBar(
+            child: BottomMenu(callback: (page) => _loadArticles(page)),
+          ),
           drawer: SideMenu(),
           appBar: AppBar(
             actions: [
@@ -74,117 +79,105 @@ class _HomePageScreenState extends State<HomePageScreen> {
               color: Color.fromRGBO(232, 8, 50, 1),
             ),
           ),
-          body: NotificationListener<ScrollNotification>(
-            // ignore: missing_return
-            onNotification: (ScrollNotification scrollInfo) {
-              // TODO: change this logic towards a page-based navigation
-              if (scrollInfo.metrics.pixels ==
-                  scrollInfo.metrics.maxScrollExtent) {
-                HttpFeeds().incrementPageNumber();
-                setState(() {
-                  _loadArticles();
-                });
-              }
-            },
-            child: Scrollbar(
-              child: ListView.builder(
-                itemCount: snapshot.data.length,
-                itemBuilder: (builder, index) {
-                  Article item = snapshot.data[index];
-                  String categories = item.embedded.wpTerm[0]
-                      .map((e) => e.name)
-                      .join(', ')
-                      .toUpperCase();
-                  String date = _dateFormatter.format(item.date);
+          body: Scrollbar(
+            child: ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (builder, index) {
+                Article item = snapshot.data[index];
+                String categories = item.embedded.wpTerm[0]
+                    .map((e) => e.name)
+                    .join(', ')
+                    .toUpperCase();
+                String date = _dateFormatter.format(item.date);
 
-                  return Container(
-                    margin: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 0),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          PageTransition(
-                            ArticleScreen(article: item),
-                          ),
-                        );
-                      },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Container(
-                            padding: EdgeInsets.symmetric(vertical: 5.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  categories,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14.0,
-                                    color: Color.fromRGBO(119, 119, 119, 1),
-                                  ),
+                return Container(
+                  margin: const EdgeInsets.fromLTRB(12.0, 12.0, 12.0, 0),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        PageTransition(
+                          ArticleScreen(article: item),
+                        ),
+                      );
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 5.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                categories,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14.0,
+                                  color: Color.fromRGBO(119, 119, 119, 1),
                                 ),
-                                Text(
-                                  date,
-                                  style: TextStyle(
-                                    fontSize: 14.0,
-                                    color: Color.fromRGBO(119, 119, 119, 1),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(vertical: 5.0),
-                            child: Stack(
-                              children: <Widget>[
-                                AspectRatio(
-                                  aspectRatio: 269 / 173,
-                                  child: OctoImage(
-                                    width: MediaQuery.of(context).size.width,
-                                    image: CachedNetworkImageProvider(
-                                        item.imageUrl),
-                                    placeholderBuilder: OctoPlaceholder
-                                        .circularProgressIndicator(),
-                                    errorBuilder:
-                                        OctoError.icon(color: Colors.red),
-                                    fit: BoxFit.fitWidth,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(vertical: 5.0),
-                            child: Text(
-                              item.title.text,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 17.0,
-                                color: Color.fromRGBO(232, 8, 50, 1),
                               ),
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(vertical: 5.0),
-                            child: Text(
-                              item.excerpt.text,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black,
-                                fontSize: 12.0,
+                              Text(
+                                date,
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                  color: Color.fromRGBO(119, 119, 119, 1),
+                                ),
                               ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 5.0),
+                          child: Stack(
+                            children: <Widget>[
+                              AspectRatio(
+                                aspectRatio: 269 / 173,
+                                child: OctoImage(
+                                  key: Key(item.imageUrl),
+                                  width: MediaQuery.of(context).size.width,
+                                  image:
+                                      CachedNetworkImageProvider(item.imageUrl),
+                                  placeholderBuilder: OctoPlaceholder
+                                      .circularProgressIndicator(),
+                                  errorBuilder:
+                                      OctoError.icon(color: Colors.red),
+                                  fit: BoxFit.fitWidth,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 5.0),
+                          child: Text(
+                            item.title.text,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 17.0,
+                              color: Color.fromRGBO(232, 8, 50, 1),
                             ),
                           ),
-                          Divider(
-                            thickness: 0.3,
-                            color: Colors.black,
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 5.0),
+                          child: Text(
+                            item.excerpt.text,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black,
+                              fontSize: 12.0,
+                            ),
                           ),
-                        ],
-                      ),
+                        ),
+                        Divider(
+                          thickness: 0.3,
+                          color: Colors.black,
+                        ),
+                      ],
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
           ),
         );
@@ -192,7 +185,10 @@ class _HomePageScreenState extends State<HomePageScreen> {
     );
   }
 
-  void _loadArticles() async {
-    _articles = HttpFeeds().getArticles();
+  // TODO: make transitions smoother between pages
+  void _loadArticles(int page) async {
+    setState(() {
+      _articles = HttpFeeds().getArticles(page);
+    });
   }
 }
