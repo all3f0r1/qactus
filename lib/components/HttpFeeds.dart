@@ -5,26 +5,25 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class HttpFeeds {
-  static final HttpFeeds _instance = HttpFeeds.initState();
-
+  static HttpFeeds _instance;
   final _urlPosts = 'https://qactus.fr/wp-json/wp/v2/posts'
       '?_embed=author,wp:term'
       '&_fields=id,date,link,title.rendered,jetpack_featured_media_url,'
       'content.rendered,excerpt.rendered,_links.author,_links.wp:term'
       '&page=';
 
-  var _client = http.Client();
+  final _client = http.Client();
 
-  factory HttpFeeds() {
-    return _instance;
+  HttpFeeds._internal() {
+    _instance = this;
   }
 
-  HttpFeeds.initState();
+  factory HttpFeeds() => _instance ?? HttpFeeds._internal();
 
   Future<List<Article>> getArticles(int page) async {
     final response = await _client.get(_urlPosts + page.toString());
 
-    // Compute function to run in a separate isolate.
+    // Compute function to run in a separate isolate (ie thread)
     return compute(articleFromJson, response.body);
   }
 
