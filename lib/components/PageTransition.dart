@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class PageTransition<T> extends PageRoute<T> {
   PageTransition(this.child);
+
   @override
   Color get barrierColor => Colors.white;
 

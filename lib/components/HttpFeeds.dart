@@ -6,13 +6,13 @@ import 'package:http/http.dart' as http;
 
 class HttpFeeds {
   static HttpFeeds _instance;
+
+  final _client = http.Client();
   final _urlPosts = 'https://qactus.fr/wp-json/wp/v2/posts'
       '?_embed=author,wp:term'
       '&_fields=id,date,link,title.rendered,jetpack_featured_media_url,'
       'content.rendered,excerpt.rendered,_links.author,_links.wp:term'
       '&page=';
-
-  final _client = http.Client();
 
   HttpFeeds._internal() {
     _instance = this;

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:Qactus/components/BottomMenu.dart';
 import 'package:Qactus/components/PageTransition.dart';
 import 'package:Qactus/components/SideMenu.dart';
@@ -5,13 +7,15 @@ import 'package:Qactus/json_processing/Article.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
 import 'package:octo_image/octo_image.dart';
 
 import '../components/HttpFeeds.dart';
 import 'ArticleScreen.dart';
 import 'ErrorScreen.dart';
-import 'LoadingScreen.dart';
+import 'SplashScreen.dart';
 
 class HomePageScreen extends StatefulWidget {
   const HomePageScreen({Key key}) : super(key: key);
@@ -19,6 +23,7 @@ class HomePageScreen extends StatefulWidget {
   @override
   _HomePageScreenState createState() => _HomePageScreenState();
 
+  // Used for callbacks from BottomMenu
   static _HomePageScreenState of(BuildContext context) =>
       context.findAncestorStateOfType<_HomePageScreenState>();
 }
@@ -26,6 +31,8 @@ class HomePageScreen extends StatefulWidget {
 class _HomePageScreenState extends State<HomePageScreen> {
   final DateFormat _dateFormatter = DateFormat('dd-MM-yyyy');
   Future<List<Article>> _articles;
+
+  double _loadingProgress;
 
   @override
   void initState() {
@@ -37,16 +44,18 @@ class _HomePageScreenState extends State<HomePageScreen> {
   Widget build(BuildContext context) {
     return FutureBuilder<List<Article>>(
       future: _articles,
-      builder: (builder, snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<List<Article>> snapshot) {
         if (snapshot.hasError) {
           return ErrorScreen();
         } else if (!snapshot.hasData) {
-          return LoadingScreen();
+          return SplashScreen();
         }
 
         return Scaffold(
           bottomNavigationBar: BottomAppBar(
-            child: BottomMenu(callback: (page) => _loadArticles(page)),
+            child: BottomMenu(callback: (page) {
+              _loadArticles(page);
+            }),
           ),
           drawer: SideMenu(),
           appBar: AppBar(
@@ -82,7 +91,19 @@ class _HomePageScreenState extends State<HomePageScreen> {
           body: Scrollbar(
             child: ListView.builder(
               itemCount: snapshot.data.length,
-              itemBuilder: (builder, index) {
+              itemBuilder: (BuildContext builder, int index) {
+                if (snapshot.connectionState == ConnectionState.done &&
+                    EasyLoading.isShow) {
+                  EasyLoading.dismiss();
+                } else if (snapshot.connectionState != ConnectionState.done &&
+                    !EasyLoading.isShow) {
+                  // _loadingProgress = (index + 1) / snapshot.data.length;
+                  EasyLoading.show(
+                    status: 'Chargement...',
+                    maskType: EasyLoadingMaskType.black,
+                  );
+                }
+
                 Article item = snapshot.data[index];
                 String categories = item.embedded.wpTerm[0]
                     .map((e) => e.name)
@@ -128,23 +149,17 @@ class _HomePageScreenState extends State<HomePageScreen> {
                         ),
                         Container(
                           padding: EdgeInsets.symmetric(vertical: 5.0),
-                          child: Stack(
-                            children: <Widget>[
-                              AspectRatio(
-                                aspectRatio: 269 / 173,
-                                child: OctoImage(
-                                  key: Key(item.imageUrl),
-                                  width: MediaQuery.of(context).size.width,
-                                  image:
-                                      CachedNetworkImageProvider(item.imageUrl),
-                                  placeholderBuilder: OctoPlaceholder
-                                      .circularProgressIndicator(),
-                                  errorBuilder:
-                                      OctoError.icon(color: Colors.red),
-                                  fit: BoxFit.fitWidth,
-                                ),
-                              ),
-                            ],
+                          child: AspectRatio(
+                            aspectRatio: 269 / 173,
+                            child: OctoImage(
+                              key: Key(item.imageUrl),
+                              width: MediaQuery.of(context).size.width,
+                              image: CachedNetworkImageProvider(item.imageUrl),
+                              placeholderBuilder:
+                                  OctoPlaceholder.circularProgressIndicator(),
+                              errorBuilder: OctoError.icon(color: Colors.red),
+                              fit: BoxFit.fitWidth,
+                            ),
                           ),
                         ),
                         Container(
@@ -165,7 +180,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: Colors.black,
-                              fontSize: 12.0,
+                              fontSize: 13.0,
                             ),
                           ),
                         ),
@@ -186,7 +201,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
   }
 
   // TODO: make transitions smoother between pages
-  void _loadArticles(int page) async {
+  void _loadArticles(int page) {
     setState(() {
       _articles = HttpFeeds().getArticles(page);
     });

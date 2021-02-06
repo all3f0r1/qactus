@@ -1,16 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class LoadingScreen extends StatefulWidget {
-  LoadingScreen({Key key}) : super(key: key);
+class SplashScreen extends StatefulWidget {
+  SplashScreen({Key key}) : super(key: key);
 
-  final Duration duration = Duration(milliseconds: 800);
+  final Duration duration = Duration(seconds: 2);
 
   @override
-  _LoadingScreenState createState() => _LoadingScreenState();
+  _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _LoadingScreenState extends State<LoadingScreen>
+class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   AnimationController _animationController;
 
