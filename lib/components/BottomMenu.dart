@@ -1,3 +1,4 @@
+import 'package:Qactus/components/DeactivableButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,8 +9,6 @@ class BottomMenu extends StatefulWidget {
   BottomMenu({Key key, this.callback}) : super(key: key);
   final Color btnColor = Colors.white;
   final Color btnTextColor = Colors.black;
-  final Color btnColorDisabled = Colors.white;
-  final Color btnTextColorDisabled = Colors.white;
 
   final PageChangeCallback callback;
 
@@ -50,38 +49,39 @@ class _BottomMenuState extends State<BottomMenu> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
             children: [
-              RaisedButton(
-                color:
-                    currentPage > 1 ? widget.btnColor : widget.btnColorDisabled,
-                textColor: currentPage > 1
-                    ? widget.btnTextColor
-                    : widget.btnTextColorDisabled,
-                elevation: currentPage > 1 ? 1 : 0,
-                child: Icon(Icons.arrow_back),
-                onPressed: () {
-                  if (currentPage > 1) {
-                    _decCurrentPage(currentPage);
-                    widget.callback(currentPage - 1);
-                  }
-                },
+              DeactivatableButton(
+                isDeactivated: currentPage <= 1,
+                child: RaisedButton(
+                  color: widget.btnColor,
+                  textColor: widget.btnTextColor,
+                  child: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    if (currentPage > 1) {
+                      _decCurrentPage(currentPage);
+                      widget.callback(currentPage - 1);
+                    } else {
+                      return null;
+                    }
+                  },
+                ),
               ),
               Text("Page " + currentPage.toString()),
               // TODO: hardcoded value "100", change it to be dynamic (if possible at all)
-              RaisedButton(
-                color: currentPage < 100
-                    ? widget.btnColor
-                    : widget.btnColorDisabled,
-                textColor: currentPage < 100
-                    ? widget.btnTextColor
-                    : widget.btnTextColorDisabled,
-                elevation: currentPage < 100 ? 1 : 0,
-                child: Icon(Icons.arrow_forward),
-                onPressed: () {
-                  if (currentPage < 100) {
-                    _incCurrentPage(currentPage);
-                    widget.callback(currentPage + 1);
-                  }
-                },
+              DeactivatableButton(
+                isDeactivated: currentPage >= 100,
+                child: RaisedButton(
+                  color: widget.btnColor,
+                  textColor: widget.btnTextColor,
+                  child: Icon(Icons.arrow_forward),
+                  onPressed: () {
+                    if (currentPage < 100) {
+                      _incCurrentPage(currentPage);
+                      widget.callback(currentPage + 1);
+                    } else {
+                      return null;
+                    }
+                  },
+                ),
               ),
             ],
           ),
