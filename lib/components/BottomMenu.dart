@@ -56,12 +56,8 @@ class _BottomMenuState extends State<BottomMenu> {
                   textColor: widget.btnTextColor,
                   child: Icon(Icons.arrow_back),
                   onPressed: () {
-                    if (currentPage > 1) {
-                      _decCurrentPage(currentPage);
-                      widget.callback(currentPage - 1);
-                    } else {
-                      return null;
-                    }
+                    _decCurrentPage(currentPage);
+                    widget.callback(currentPage - 1);
                   },
                 ),
               ),
@@ -74,12 +70,8 @@ class _BottomMenuState extends State<BottomMenu> {
                   textColor: widget.btnTextColor,
                   child: Icon(Icons.arrow_forward),
                   onPressed: () {
-                    if (currentPage < 100) {
-                      _incCurrentPage(currentPage);
-                      widget.callback(currentPage + 1);
-                    } else {
-                      return null;
-                    }
+                    _incCurrentPage(currentPage);
+                    widget.callback(currentPage + 1);
                   },
                 ),
               ),
