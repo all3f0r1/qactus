@@ -58,8 +58,8 @@ class SideMenu extends StatelessWidget {
                             packageInfo.buildNumber,
                         applicationIcon: Image.asset("assets/header.png"),
                         children: [
-                          Text("Conçu par Alexandre Tournai"),
-                          Divider(),
+                          Text(
+                              "Un avis? Une suggestion? Juste quelque chose à me dire?"),
                           RaisedButton(
                             onPressed: () async {
                               final Email email = Email(
@@ -69,8 +69,8 @@ class SideMenu extends StatelessWidget {
                               );
                               await FlutterEmailSender.send(email);
                             },
-                            child: Text("Me contacter"),
-                          )
+                            child: Text("Contactez-moi"),
+                          ),
                         ],
                       ),
                     ),
