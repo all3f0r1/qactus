@@ -18,18 +18,20 @@ dependencies:
   html_unescape: ^1.0.2
   cached_network_image: ^2.5.0
   octo_image: ^0.3.0
+  blurhash_dart: ^0.2.3
   shared_preferences: ^0.5.12+4
   flutter_easyloading: ^2.2.2
 
-  # About Page
+# About Page
   flutter_email_sender: ^4.0.0
   package_info: ^0.4.3+4
 
 #  Article Screen
-  full_screen_image: ^1.0.2
   flutter_html: ^1.2.0
   share: ^0.6.5+4
   url_launcher: ^5.7.10
+  video_player: ^1.0.1
+  webview_flutter: ^1.0.7
 
 dev_dependencies:
   build_runner: ^1.0.0
@@ -38,6 +40,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  assets:
-    - assets/loading.png
-    - assets/header.png
+#  assets:
+#    - assets/loading.png

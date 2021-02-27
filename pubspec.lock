@@ -36,6 +36,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.5.0-nullsafety.1"
+  blurhash_dart:
+    dependency: "direct main"
+    description:
+      name: blurhash_dart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.3"
   boolean_selector:
     dependency: transitive
     description:
@@ -140,7 +147,7 @@ packages:
       name: chewie_audio
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.1"
+    version: "1.1.2"
   cli_util:
     dependency: transitive
     description:
@@ -210,7 +217,7 @@ packages:
       name: dart_style
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.3.11"
+    version: "1.3.12"
   fake_async:
     dependency: transitive
     description:
@@ -310,13 +317,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  full_screen_image:
-    dependency: "direct main"
-    description:
-      name: full_screen_image
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.2"
   glob:
     dependency: transitive
     description:
@@ -582,7 +582,7 @@ packages:
       name: pubspec_parse
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.7"
+    version: "0.1.8"
   quiver:
     dependency: transitive
     description:
@@ -806,7 +806,7 @@ packages:
     source: hosted
     version: "2.1.0-nullsafety.3"
   video_player:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: video_player
       url: "https://pub.dartlang.org"
@@ -862,7 +862,7 @@ packages:
     source: hosted
     version: "1.2.0"
   webview_flutter:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: webview_flutter
       url: "https://pub.dartlang.org"

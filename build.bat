@@ -1,1 +1,2 @@
-flutter build apk --target-platform android-arm,android-arm64,android-x64 --split-per-abi
+flutter build apk --target-platform android-arm64 --split-per-abi --obfuscate --split-debug-info=/qactus/compilation_results
+

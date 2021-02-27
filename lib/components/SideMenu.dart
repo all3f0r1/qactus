@@ -17,7 +17,7 @@ class SideMenu extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Image.asset(
-                    "assets/header.png",
+                    "assets/appstore.png",
                     width: 100,
                   ),
                   Text(
@@ -56,7 +56,11 @@ class SideMenu extends StatelessWidget {
                         applicationVersion: packageInfo.version +
                             " build number " +
                             packageInfo.buildNumber,
-                        applicationIcon: Image.asset("assets/header.png"),
+                        applicationIcon: Image.asset(
+                          "assets/appstore.png",
+                          width: 100.0,
+                          height: 100.0,
+                        ),
                         children: [
                           Text(
                               "Un avis? Une suggestion? Juste quelque chose à me dire?"),

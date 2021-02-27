@@ -15,7 +15,6 @@ import 'package:octo_image/octo_image.dart';
 import '../components/HttpFeeds.dart';
 import 'ArticleScreen.dart';
 import 'ErrorScreen.dart';
-import 'SplashScreen.dart';
 
 class HomePageScreen extends StatefulWidget {
   const HomePageScreen({Key key}) : super(key: key);
@@ -32,8 +31,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
   final DateFormat _dateFormatter = DateFormat('dd-MM-yyyy');
   Future<List<Article>> _articles;
 
-  double _loadingProgress;
-
   @override
   void initState() {
     super.initState();
@@ -47,8 +44,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
       builder: (BuildContext context, AsyncSnapshot<List<Article>> snapshot) {
         if (snapshot.hasError) {
           return ErrorScreen();
-        } else if (!snapshot.hasData) {
-          return SplashScreen();
         }
 
         return Scaffold(
@@ -90,7 +85,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
           ),
           body: Scrollbar(
             child: ListView.builder(
-              itemCount: snapshot.data.length,
+              itemCount: snapshot.hasData ? snapshot.data.length : 0,
               itemBuilder: (BuildContext builder, int index) {
                 if (snapshot.connectionState == ConnectionState.done &&
                     EasyLoading.isShow) {
