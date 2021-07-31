@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:package_info/package_info.dart';
 
 class SideMenu extends StatelessWidget {
@@ -64,17 +63,17 @@ class SideMenu extends StatelessWidget {
                         children: [
                           Text(
                               "Un avis? Une suggestion? Juste quelque chose à me dire?"),
-                          RaisedButton(
-                            onPressed: () async {
-                              final Email email = Email(
-                                subject: 'App Qactus',
-                                recipients: ['tournai.alexandre@gmail.com'],
-                                isHTML: false,
-                              );
-                              await FlutterEmailSender.send(email);
-                            },
-                            child: Text("Contactez-moi"),
-                          ),
+                          // ElevatedButton(
+                          //   onPressed: () async {
+                          //     final Email email = Email(
+                          //       subject: 'App Qactus',
+                          //       recipients: ['all3f0r1@protonmail.com'],
+                          //       isHTML: false,
+                          //     );
+                          //     await FlutterEmailSender.send(email);
+                          //   },
+                          //   child: Text("Contactez-moi"),
+                          // ),
                         ],
                       ),
                     ),

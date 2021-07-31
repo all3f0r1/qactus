@@ -8,7 +8,7 @@ class PageTransition<T> extends PageRoute<T> {
   Color get barrierColor => Colors.white;
 
   @override
-  String get barrierLabel => null;
+  String? get barrierLabel => null;
 
   final Widget child;
 

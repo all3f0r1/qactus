@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 
 class DeactivatableButton extends StatelessWidget {
   DeactivatableButton({
-    Key key,
-    @required this.child,
-    @required this.isDeactivated,
-  }) : super(key: key);
+    required this.child,
+    required this.isDeactivated,
+  }) : super();
 
   final MaterialButton child;
   final bool isDeactivated;

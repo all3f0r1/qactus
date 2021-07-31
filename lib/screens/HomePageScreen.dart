@@ -17,19 +17,19 @@ import 'ArticleScreen.dart';
 import 'ErrorScreen.dart';
 
 class HomePageScreen extends StatefulWidget {
-  const HomePageScreen({Key key}) : super(key: key);
+  const HomePageScreen() : super();
 
   @override
   _HomePageScreenState createState() => _HomePageScreenState();
 
   // Used for callbacks from BottomMenu
-  static _HomePageScreenState of(BuildContext context) =>
+  static _HomePageScreenState? of(BuildContext context) =>
       context.findAncestorStateOfType<_HomePageScreenState>();
 }
 
 class _HomePageScreenState extends State<HomePageScreen> {
   final DateFormat _dateFormatter = DateFormat('dd-MM-yyyy');
-  Future<List<Article>> _articles;
+  late Future<List<Article>> _articles;
 
   @override
   void initState() {
@@ -48,9 +48,11 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
         return Scaffold(
           bottomNavigationBar: BottomAppBar(
-            child: BottomMenu(callback: (page) {
-              _loadArticles(page);
-            }),
+            child: BottomMenu(
+              callback: (page) {
+                _loadArticles(page);
+              },
+            ),
           ),
           drawer: SideMenu(),
           appBar: AppBar(
@@ -85,7 +87,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
           ),
           body: Scrollbar(
             child: ListView.builder(
-              itemCount: snapshot.hasData ? snapshot.data.length : 0,
+              itemCount: snapshot.hasData ? snapshot.data!.length : 0,
               itemBuilder: (BuildContext builder, int index) {
                 if (snapshot.connectionState == ConnectionState.done &&
                     EasyLoading.isShow) {
@@ -99,7 +101,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                   );
                 }
 
-                Article item = snapshot.data[index];
+                Article item = snapshot.data![index];
                 String categories = item.embedded.wpTerm[0]
                     .map((e) => e.name)
                     .join(', ')

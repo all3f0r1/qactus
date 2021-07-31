@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 typedef void PageChangeCallback(int page);
 
 class BottomMenu extends StatefulWidget {
-  BottomMenu({Key key, this.callback}) : super(key: key);
+  BottomMenu({required this.callback}) : super();
   final Color btnColor = Colors.white;
   final Color btnTextColor = Colors.black;
 
@@ -18,7 +18,7 @@ class BottomMenu extends StatefulWidget {
 
 class _BottomMenuState extends State<BottomMenu> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  Future<int> _currentPage;
+  late Future<int?> _currentPage;
   int _lastKnownPage = 1;
 
   @override
@@ -34,12 +34,12 @@ class _BottomMenuState extends State<BottomMenu> {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: _currentPage,
-      builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<int?> snapshot) {
         // The following block is to prevent flickering
         // from rebuilding this whole widget
         int currentPage;
         snapshot.connectionState == ConnectionState.done
-            ? currentPage = snapshot.data
+            ? currentPage = snapshot.data!
             : currentPage = _lastKnownPage;
         _lastKnownPage = currentPage;
 
@@ -51,6 +51,7 @@ class _BottomMenuState extends State<BottomMenu> {
             children: [
               DeactivatableButton(
                 isDeactivated: currentPage <= 1,
+                // ignore: deprecated_member_use
                 child: RaisedButton(
                   color: widget.btnColor,
                   textColor: widget.btnTextColor,
@@ -63,18 +64,18 @@ class _BottomMenuState extends State<BottomMenu> {
               ),
               Text("Page " + currentPage.toString()),
               // TODO: hardcoded value "100", change it to be dynamic (if possible at all)
-              DeactivatableButton(
-                isDeactivated: currentPage >= 100,
-                child: RaisedButton(
-                  color: widget.btnColor,
-                  textColor: widget.btnTextColor,
-                  child: Icon(Icons.arrow_forward),
-                  onPressed: () {
-                    _incCurrentPage(currentPage);
-                    widget.callback(currentPage + 1);
-                  },
-                ),
-              ),
+              // DeactivatableButton(
+              //   isDeactivated: currentPage >= 100,
+              //   child: RaisedButton(
+              //     color: widget.btnColor,
+              //     textColor: widget.btnTextColor,
+              //     child: Icon(Icons.arrow_forward),
+              //     onPressed: () {
+              //       _incCurrentPage(currentPage);
+              //       widget.callback(currentPage + 1);
+              //     },
+              //   ),
+              // ),
             ],
           ),
         );
@@ -82,18 +83,9 @@ class _BottomMenuState extends State<BottomMenu> {
     );
   }
 
-  Future<int> _getCurrentPage() async {
+  Future<int?> _getCurrentPage() async {
     return await _prefs.then((SharedPreferences prefs) {
       return prefs.getInt('currentPage');
-    });
-  }
-
-  _incCurrentPage(int page) {
-    setState(() {
-      _currentPage = _prefs.then((SharedPreferences prefs) {
-        prefs.setInt('currentPage', page + 1);
-        return page + 1;
-      });
     });
   }
 

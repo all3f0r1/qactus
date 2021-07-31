@@ -10,6 +10,7 @@ class ErrorScreen extends StatelessWidget {
       title: Text("ERREUR"),
       content: Text("Quelque chose s'est mal passé..."),
       actions: [
+        // ignore: deprecated_member_use
         FlatButton(
           child: Text("Fermer"),
           onPressed: () =>
